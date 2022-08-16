@@ -1,0 +1,13 @@
+name: ShinyGraphUD
+title: ShinyGraphUD
+username:
+account: myate
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6789705
+bundleId: 6204601
+url: https://myate.shinyapps.io/ShinyGraphUD/
+when: 1660610305.76553
+lastSyncTime: 1660610305.76554
+asMultiple: FALSE
+asStatic: FALSE
