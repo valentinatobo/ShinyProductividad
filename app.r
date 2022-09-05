@@ -1,4 +1,5 @@
 # App de Graficas de Productividad usando R y Shiny
+# https://github.com/deepanshu88/summaryBox
 
 # Importar librerias
 library(shiny)
@@ -17,6 +18,7 @@ library(tm)
 library(SnowballC)
 library("wordcloud")
 library("RColorBrewer")
+library(summaryBox)
 
 #Cargar script de nube de palabras
 source("nubeDePalabras.R")
@@ -44,11 +46,90 @@ ui <- fluidPage(
     #Titulo de la barra de navegacion
     "Productividad",
     
+    tabPanel(
+      "Información General",
+      br(),
+      
+      fluidRow(
+        summaryBox3("Total de Productos", "3.499", width = 12, icon = "fas fa-chart-pie", style = "primary")     
+                
+      ),
+      br(),
+      fluidRow(
+        summaryBox3("Generación de Nuevo Conocimiento (GNC)", "2.127", width = 6, style = "primary"),        
+        summaryBox3("Desarrollo Tecnológico e Innovación (DTI)", "134", width = 6, style = "primary"),        
+      ),
+      br(),br(),
+      fluidRow(
+               
+        summaryBox3("Apropiación Social de Conocimiento (ASC)", "179", width = 6, style = "primary"),        
+        summaryBox3("Formación Recurso Humano (FRH)", "1.059", width = 6, style = "primary"),        
+      ),
+      hr(),
+      #Fila
+      fluidRow(
+        
+        #Espacio para grafica de GNC Articulos
+        column(
+          
+          #Tamaño
+          4,
+          plotOutput("GNCBarras")
+          
+        ),
+        
+        #Espacio para grafica de GNC Libros
+        column(
+          
+          #Tamaño
+          4,
+          plotOutput("GNCLibros")
+          
+        ),
+        
+        #Espacio para grafica de DTI Software
+        column(
+          
+          #Tamaño
+          4,
+          plotOutput("DTISoftware")
+          
+        )
+        
+        
+      ),
+      hr(),
+      fluidRow(
+        
+        #Espacio para grafica de DTI Software
+        column(
+          
+          #Tamaño
+          6,
+          plotOutput("ASCLibros")
+          
+        ), 
+        #Espacio para grafica de FRH Trabajos
+        column(
+          
+          #Tamaño
+          6,
+          plotOutput("FRHTrabajos")
+          
+        )
+        
+      ),
+      hr(), hr(),
+      
+      
+      
+    ),
+    
     #Pestaña de graficas
     tabPanel(
       
       #Titulo de la pestaña
-      "Gráficas",
+      "Análisis de Relaciones",
       
       #Panel lateral izquierdo
       sidebarPanel(
@@ -151,7 +232,36 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
+  #1ra pestaña
+  output$GNCBarras <- renderPlot({
+    #Llamar al script correspondiente
+    generarBarraArticulosDash()
+  })
   
+  output$GNCLibros <- renderPlot({
+    #Llamar al script correspondiente
+    generarBarraLibrosDash()
+  })
+  
+  output$DTISoftware <- renderPlot({
+    #Llamar al script correspondiente
+    generarBarraSoftwareDash()
+  })
+  
+  output$ASCLibros <- renderPlot({
+    #Llamar al script correspondiente
+    generarBarraCapitulosDash()
+  })
+  
+  output$FRHTrabajos <- renderPlot({
+    #Llamar al script correspondiente
+    generarBarraTrabajosDash()
+  })
+  
+  #FRHTrabajos
+  
+  
+  #2da pestaña
   output$nubeDePalabras <- renderPlot({
     #Llamar al script correspondiente
     generarNubeDePalabrasPorGrupo(input$grupo)
