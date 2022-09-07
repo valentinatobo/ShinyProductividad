@@ -19,6 +19,17 @@ library(readxl)
 library("stopwords")
 library(tidyverse)
 library(tidytext)
+library(r2r)
+
+
+#Hash para las abreviaturas
+m <- hashmap()
+insert(m, "Energía y Potencia", "E y P")
+insert(m, "Geomática; Ciencias de la Tierra y Gestión de Territorio", "G; C T y G T")
+insert(m, "Informática y Procesamiento de Datos", "I y P D")
+insert(m, "Inteligencia Computacional", "I C")
+insert(m, "Organización; Producción y Logística", "O; P y L")
+insert(m, "Tecnología; Información y Comunicaciones", "TIC")
 
 
 #Funcion para generar la grafica de barras por productos en revistas Internacionales (NA-Q1)
@@ -42,12 +53,16 @@ generarBarraArticulosRevista <- function(grupoSelec, tipoRevista){
   
   tabladeFrec <- table(revistaInternacional)
   
-  barplot (tabladeFrec,
-           xlab = "Cuantil de la revista",
-           ylab = "Cantidad de articulos",
-           col = brewer.pal(6, "Set1")
-           )
+  etiquetas <- paste0(names(tabladeFrec), " (", round(100 * tabladeFrec/sum(tabladeFrec), 2), "%)")
   
+  par(mar=c(5,4,6,2))
+  plt <- barplot (tabladeFrec,
+           xlab = "",
+           ylab = "Cantidad de articulos",
+           col = brewer.pal(6, "Set1"),
+           xaxt="n"
+           )
+  text(plt, par("usr")[3], labels = etiquetas, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=1)
 }
 
 rotate_x <- function(data, labels_vec, rot_angle) {
@@ -71,21 +86,21 @@ generarBarraArticulosDash <- function(){
   labelsTablaDeFrec = names(tabladeFrec)
   
   #Resumir labels
-  labelsTablaDeFrec[2] = "Geomática..."
-  labelsTablaDeFrec[3] = "Informática..."
-  labelsTablaDeFrec[5] = "Organización..."
-  labelsTablaDeFrec[7] = "TIC"
+  #labelsTablaDeFrec[2] = "Geomática..."
+  #labelsTablaDeFrec[3] = "Informática..."
+  #labelsTablaDeFrec[5] = "Organización..."
+  #labelsTablaDeFrec[7] = "TIC"
   
   #rotate_x(tabladeFrec, row.names(tabladeFrec), 45)
 
-  par(mar=c(5,4,6,2))
+  par(mar=c(2,4,6,2))
   plt <- barplot (tabladeFrec,
            main = "GNC - Publicaciones en revistas cientificas",
            ylab = "Cantidad de articulos",
            col = brewer.pal(6, "Set1"),
-           xaxt="n"
+           #xaxt="n"
   )
-  text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
+  #text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
   
 }
 
@@ -112,14 +127,14 @@ generarBarraLibrosDash <- function(){
   
   #rotate_x(tabladeFrec, row.names(tabladeFrec), 45)
   
-  par(mar=c(5,4,6,2))
+  par(mar=c(2,4,6,2))
   plt <- barplot (tabladeFrec,
                   main = "GNC - Libros de Investigación",
                   ylab = "Cantidad de Libros",
                   col = brewer.pal(6, "Set1"),
-                  xaxt="n"
+                  ##xaxt="n"
   )
-  text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
+  #text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
   
 }
 
@@ -146,14 +161,14 @@ generarBarraSoftwareDash <- function(){
   
   #rotate_x(tabladeFrec, row.names(tabladeFrec), 45)
   
-  par(mar=c(5,4,6,2))
+  par(mar=c(2,4,6,2))
   plt <- barplot (tabladeFrec,
                   main = "DTI - Software",
                   ylab = "Software Desarrollado",
                   col = brewer.pal(6, "Set1"),
-                  xaxt="n"
+                  #xaxt="n"
   )
-  text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
+  #text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
   
 }
 
@@ -180,14 +195,14 @@ generarBarraCapitulosDash <- function(){
   
   #rotate_x(tabladeFrec, row.names(tabladeFrec), 45)
   
-  par(mar=c(5,4,6,2))
+  par(mar=c(2,4,6,2))
   plt <- barplot (tabladeFrec,
                   main = "ASC - Capítulos de libros en eventos científicos",
                   ylab = "Capítulos de Libros",
                   col = brewer.pal(6, "Set1"),
-                  xaxt="n"
+                  #xaxt="n"
   )
-  text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
+  #text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
   
 }
 
@@ -206,6 +221,7 @@ generarBarraTrabajosDash <- function(){
   tabladeFrec <- table(articulos)
   labelsTablaDeFrec = names(tabladeFrec)
   
+  
   #Resumir labels
   #labelsTablaDeFrec[2] = "Geomática..."
   #labelsTablaDeFrec[3] = "Informática..."
@@ -214,14 +230,14 @@ generarBarraTrabajosDash <- function(){
   
   #rotate_x(tabladeFrec, row.names(tabladeFrec), 45)
   
-  par(mar=c(5,4,7,2))
+  par(mar=c(2,4,7,2))
   plt <- barplot (tabladeFrec,
                   main = "FRH - Proyectos de Grado, Tesis de Maestría y Tesis de Doctorado",
                   ylab = "Producto FRH",
                   col = brewer.pal(6, "Set1"),
-                  xaxt="n"
+                  #xaxt="n"
   )
-  text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
+  #text(plt, par("usr")[3], labels = labelsTablaDeFrec, srt = 30, adj = c(1.1,1.1), xpd = TRUE, cex=0.8)
   
 }
 

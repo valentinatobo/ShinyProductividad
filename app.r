@@ -19,6 +19,7 @@ library(SnowballC)
 library("wordcloud")
 library("RColorBrewer")
 library(summaryBox)
+library(r2r)
 
 #Cargar script de nube de palabras
 source("nubeDePalabras.R")
@@ -51,12 +52,12 @@ ui <- fluidPage(
       br(),
       
       fluidRow(
-        summaryBox3("Total de Productos", "3.499", width = 12, icon = "fas fa-chart-pie", style = "primary")     
+        summaryBox3("Total de Productos", "3.503", width = 12, icon = "fas fa-chart-pie", style = "primary")     
                 
       ),
       br(),
       fluidRow(
-        summaryBox3("Generación de Nuevo Conocimiento (GNC)", "2.127", width = 6, style = "primary"),        
+        summaryBox3("Generación de Nuevo Conocimiento (GNC)", "2.131", width = 6, style = "primary"),        
         summaryBox3("Desarrollo Tecnológico e Innovación (DTI)", "134", width = 6, style = "primary"),        
       ),
       br(),br(),
@@ -174,7 +175,7 @@ ui <- fluidPage(
       mainPanel(
         
         #Espacio para red de coocurrencia
-        h3("Red de Co-ocurrencia en títulos (Toda la prod. académica)"),
+        h3("Red de Co-ocurrencia en Títulos (GNC - DTI - ASC - FRH)"),
         plotOutput("redDeCoocurrencia"),
         hr(),
         
@@ -185,7 +186,7 @@ ui <- fluidPage(
           column(
             6,
             #Espacio para la nube de palabras
-            h3("Nube de palabras (Títulos de toda la prod. académica)"),
+            h3("Nube de palabras en Títulos (GNC - DTI - ASC - FRH)"),
             plotOutput("nubeDePalabras"),
             ),
           
@@ -206,7 +207,7 @@ ui <- fluidPage(
           column(
             #Tamaño
             6,
-            h4("Articulos pub. en revistas nacionales (Publindex)"),
+            h4("Publicaciones (GNC) en revistas nacionales (Publindex)"),
             plotOutput("barrasRevNac")
             
           ),
@@ -215,10 +216,69 @@ ui <- fluidPage(
           column(
             #Tamaño
             6,
-            h4("Articulos pub. en revistas internacionales (SJR/JCR)"),
+            h4("Publicaciones (GNC) en revistas internacionales (SJR/JCR)"),
             plotOutput("barrasRevInt")
           )
         ),
+        
+        #Fila para las primeras 2 tortas (Articulos, Libros)
+        fluidRow(
+          
+          #Espacio para grafica de Articulos
+          column(
+            #Tamaño
+            6,
+            h4("GNC - Publicaciones en revistas cientificas"),
+            plotOutput("tortaGrupoArt")
+            
+          ),
+          
+          #Espacio para grafica de revistas internacionales
+          column(
+            #Tamaño
+            6,
+            h4("GNC - Libros de Investigación"),
+            plotOutput("tortaGrupoLib")
+          ), 
+          
+           
+        ), hr(),
+        
+        #Fila para las siguientes 2 tortas (Sofrware, Capitulos)
+        
+        fluidRow(
+          #Espacio para grafica de software
+          column(
+            #Tamaño
+            6,
+            h4("DTI - Software"),
+            plotOutput("tortaGrupoSof")
+          ),
+          
+          #Espacio para grafica de software
+          column(
+            #Tamaño
+            6,
+            h4("ASC - Capítulos de libros en eventos científicos"),
+            plotOutput("tortaGrupoCap")
+          ),
+          
+          #Fila para las siguiente torta (Trabajos)
+          
+          fluidRow(
+            #Espacio para grafica de software
+            column(
+              #Tamaño
+              12,
+              h4("FRH - Proyectos de Grado, Tesis de Maestría y Tesis de Doctorado"),
+              plotOutput("tortaGrupoTra")
+            ),
+          ),
+          
+        ),
+        
+        
+        
       ) #Cierre del panel principal
       
       
@@ -290,6 +350,31 @@ server <- function(input, output) {
   output$barrasRevInt <- renderPlot({
     #Llamar al script correspondiente
     generarBarraArticulosRevista(input$grupo, 11)
+  })
+  
+  output$tortaGrupoArt <- renderPlot({
+    #Llamar al script correspondiente
+    generarTortaPorGrupoArticulos(input$grupo)
+  })
+  
+  output$tortaGrupoLib <- renderPlot({
+    #Llamar al script correspondiente
+    generarTortaPorGrupoLibros(input$grupo)
+  })
+  
+  output$tortaGrupoSof <- renderPlot({
+    #Llamar al script correspondiente
+    generarTortaPorGrupoSoftware(input$grupo)
+  })
+  
+  output$tortaGrupoCap <- renderPlot({
+    #Llamar al script correspondiente
+    generarTortaPorGrupoCapitulos(input$grupo)
+  })
+  
+  output$tortaGrupoTra <- renderPlot({
+    #Llamar al script correspondiente
+    generarTortaPorGrupoTrabajos(input$grupo)
   })
   
 }

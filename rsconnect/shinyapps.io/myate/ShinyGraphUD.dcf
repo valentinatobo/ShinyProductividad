@@ -5,9 +5,9 @@ account: myate
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6789705
-bundleId: 6204601
+bundleId: 6268996
 url: https://myate.shinyapps.io/ShinyGraphUD/
-when: 1660610305.76553
-lastSyncTime: 1660610305.76554
+when: 1662356732.79319
+lastSyncTime: 1662356732.7932
 asMultiple: FALSE
 asStatic: FALSE
