@@ -20,6 +20,10 @@ library("wordcloud")
 library("RColorBrewer")
 library(summaryBox)
 library(r2r)
+library(udunits2)
+library(r2d3)
+library(jsonlite)
+
 
 #Cargar script de nube de palabras
 source("nubeDePalabras.R")
@@ -38,10 +42,15 @@ source("barrasRevistas.R")
 ####################################
 
 ui <- fluidPage(
+  #Archivo de Estilos Ubicado en Carpeta WWW
+  tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css")),
+  
+  #Version de D3 que Shiny reconoce
+  tags$script(src='//d3js.org/d3.v3.min.js'),
   
   #Tema a utilizar
   theme = shinytheme("flatly"),
-  
+
   navbarPage(
     
     #Titulo de la barra de navegacion
@@ -137,7 +146,7 @@ ui <- fluidPage(
         
         #Selector de grupo
         selectInput("grupo", label = "Grupo de Investigación:", 
-                    choices = list(
+                    choices = list('',
                       "GIIRA",
                       "LAMIC",
                       "IDEAS",
@@ -167,7 +176,7 @@ ui <- fluidPage(
                       "THRISCUD",
                       "VIRTUS",
                       "GICALYT"), 
-                    selected = "GIIRA"),
+                    selected = ''),
         
       ),
       
@@ -282,7 +291,21 @@ ui <- fluidPage(
       ) #Cierre del panel principal
       
       
-      ) #Cierre pestaña de graficas
+      ),
+    tabPanel(
+      #Titulo de la pestaña
+      "Análisis de Relaciones",
+      sidebarPanel(
+      selectInput(inputId = "condiciónGrafico",
+                  label = 'Graficos',
+                  choices = c('','Países donde más se publican'),
+                  selected = ''
+      ),
+      
+      #The d3 graph
+      uiOutput("d3")
+        
+      )) #Cierre pestaña de graficas
     ), #Cierre de la barra de navegacion
 ) #Cierre de la UI
 
@@ -290,7 +313,7 @@ ui <- fluidPage(
 # Servidor                         #
 ####################################
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   
   #1ra pestaña
   output$GNCBarras <- renderPlot({
@@ -376,6 +399,29 @@ server <- function(input, output) {
     #Llamar al script correspondiente
     generarTortaPorGrupoTrabajos(input$grupo)
   })
+  
+  # Traemos los Datos, para analizarlos y enviarlos a D3
+  observeEvent(input$condiciónGrafico, {
+    
+    #Usamos tidyverse para dividir los datos en función de lo seleccionado
+    productividad <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx", 
+                                                               sheet = "Datos de Articulos Shiny")
+    
+    dfMpg <- productividad %>% 
+      filter(class == input$condiciónGrafico) %>%
+      group_by(manufacturer) %>% 
+      mutate(avgCity = mean(cty)) %>% 
+      select(manufacturer, avgCity) %>% 
+      unique() %>% 
+      rename(name = manufacturer, value = avgCity)
+    
+    #Convert the tibble to json
+    jsonMpg <- toJSON(dfMpg, pretty=TRUE)
+    
+    #Send that json from the session to our javascript
+    session$sendCustomMessage(type="jsondata",jsonMpg)
+    
+  }, ignoreNULL = FALSE,ignoreInit = FALSE)
   
 }
 

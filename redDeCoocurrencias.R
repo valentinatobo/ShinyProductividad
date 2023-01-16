@@ -114,7 +114,7 @@ generarRedDeCoocurrenciasPorGrupo <- function(grupoSelec) {
   
   set.seed(2017)
   ggraph(bigram_graph, layout = "fr") + 
-    geom_edge_link() +
+   geom_edge_link() +
     geom_node_point() +
     geom_node_text(aes(label = name), vjust = 1, hjust = 1)
   
