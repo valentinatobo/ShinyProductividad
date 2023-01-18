@@ -14,28 +14,33 @@ Data <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
 #-------------------------------------------------------------------------------
 
 #Paises donde mas Se Publica
-atributo1 <- "País"
-RevFil  <- (Data[,c(1,7,8)])
-a <- table(RevFil)
+pais <- "País"
+PaiPlus  <- (Data[, pais])
+#Separación de Elementos
+PaiPlusA <- split(PaiPlus, PaiPlus$País)
+#Muestra De Cantidades
+PaiPlusB <- table(PaiPlus)
 
 #Grafica
 
 #-------------------------------------------------------------------------------
 #Revistas donde mas se Publica
-
-atributo2 <- "ISSN"
-RevFil  <- (Data[,atributo2])
-b <- table(RevFil)
+issn <- "ISSN"
+revista <- "Nombre de revista"
+RevPlus  <- (Data[,c(issn, revista)])
+#Separación de Elementos
+RevPlusA <- split(RevPlus, RevPlus$ISSN)
+#Muestra De Cantidades
+RevPlusB <- table(RevPlus)
 #Grafica
 
 #-------------------------------------------------------------------------------
 
 #Revistas con mejores Cuartiles
-atributo3 <- "Nombre de revista"
-atributo4 <- "ISSN"
-atributo5 <- "SJR/JCR"
+
+cuartil <- "SJR/JCR"
 #Revistas con Sus Cuartiles
-RevCuar  <- Data[,c(atributo3, atributo4, atributo5)]
+RevCuar  <- Data[,c(revista, issn, cuartil)]
 #se Validan los duplicados en la selección
 #RevCuar2 <- duplicated(RevCuar)
 #Se retiran los valores duplicados
@@ -50,12 +55,41 @@ RevMay <- na.exclude(RevCuar[RevCuar$`SJR/JCR` == "Q1" | RevCuar$`SJR/JCR` == "Q
 #-------------------------------------------------------------------------------
 
 #Áreas de investigación donde más se publica
-
+Area1 <- "Area de Investigación 1"
+Area2 <- "Area de Investigación 2"
+ArPlus1 <- Data[, Area1]
+ArPlus2 <- Data[, Area2]
+#Agrupación de Las Areas
+ArPlus1 <- split(ArPlus1, ArPlus1$`Area de Investigación 1`)
+ArPlus2 <- split(ArPlus2, ArPlus2$`Area de Investigación 2`)
 
 #Grafica
 
 #-------------------------------------------------------------------------------
 #Áreas de investigación donde más se publica en revistas de mayor cuartil
+
+#Tabla Con los Datos Necesarios
+ArCuar1 <- Data[, c(Area1, issn, cuartil)]
+ArCuar2 <- Data[, c(Area2, issn, cuartil)]
+
+#Cambiamos la Columna de Cuartil por un tipo clasificador
+ArCuar1$`SJR/JCR` <- factor(ArCuar1$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
+ArCuar2$`SJR/JCR` <- factor(ArCuar2$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
+
+#Revistas con Cuartil 1 y 2
+ArCuarMay1 <- na.exclude(ArCuar1[ArCuar1$`SJR/JCR` == "Q1" | ArCuar1$`SJR/JCR` == "Q2",])
+ArCuarMay2 <- na.exclude(ArCuar2[ArCuar2$`SJR/JCR` == "Q1" | ArCuar2$`SJR/JCR` == "Q2",])
+#Agrupación de Las Areas
+ArCuarMay1 <- split(ArCuarMay1, ArCuarMay1$`Area de Investigación 1`)
+ArCuarMay2 <- split(ArCuarMay2, ArCuarMay2$`Area de Investigación 2`)
+
+#Contrucción de la matriz en que se encontraran los Datos para Graficar
+matriz <- cbind(names(ArCuarMay1))
+publicaciones <- NULL
+for (i in ArCuarMay1) {
+  publicaciones <- c(publicaciones, nrow(i))
+}
+matriz <- cbind(matriz, publicaciones)
 
 #Grafica
 
