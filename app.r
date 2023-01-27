@@ -302,8 +302,6 @@ ui <- fluidPage(
                   selected = ''
       ),
       
-      #The d3 graph
-      uiOutput("d3")
         
       )) #Cierre pestaña de graficas
     ), #Cierre de la barra de navegacion
@@ -407,19 +405,19 @@ server <- function(input, output, session) {
     productividad <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx", 
                                                                sheet = "Datos de Articulos Shiny")
     
-    dfMpg <- productividad %>% 
-      filter(class == input$condiciónGrafico) %>%
-      group_by(manufacturer) %>% 
-      mutate(avgCity = mean(cty)) %>% 
-      select(manufacturer, avgCity) %>% 
-      unique() %>% 
-      rename(name = manufacturer, value = avgCity)
+      #dfMpg <- productividad %>% 
+      #filter(class == input$condiciónGrafico) %>%
+      #group_by(manufacturer) %>% 
+      #mutate(avgCity = mean(cty)) %>% 
+      #select(manufacturer, avgCity) %>% 
+      #unique() %>% 
+      #rename(name = manufacturer, value = avgCity)
     
     #Convert the tibble to json
-    jsonMpg <- toJSON(dfMpg, pretty=TRUE)
+    #jsonMpg <- toJSON(dfMpg, pretty=TRUE)
     
     #Send that json from the session to our javascript
-    session$sendCustomMessage(type="jsondata",jsonMpg)
+    #session$sendCustomMessage(type="jsondata",jsonMpg)
     
   }, ignoreNULL = FALSE,ignoreInit = FALSE)
   

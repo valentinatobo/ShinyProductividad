@@ -89,12 +89,28 @@ publicaciones <- NULL
 for (i in ArCuarMay1) {
   publicaciones <- c(publicaciones, nrow(i))
 }
-matriz <- cbind(matriz, publicaciones)
+matriz <- cbind(matriz, publicaciones)## Matriz para Graficar
 
 #Grafica
 
 #-------------------------------------------------------------------------------
 #Países con mayor índice de cuartil de revistas
+PMCR <- Data[, c(pais, cuartil)]
+#Separar mejores Cuartiles
+#Cambiamos la Columna de Cuartil por un tipo clasificador
+PMCR$`SJR/JCR` <- factor(PMCR$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
+#Revistas con Cuartil 1 y 2
+PMCR <- na.exclude(PMCR[PMCR$`SJR/JCR` == "Q1" | PMCR$`SJR/JCR` == "Q2",])
+#Separar por Paises
+PMCR <- split(PMCR, PMCR$País)
+#Construir Tabla para Grafico
+MPMCR <- cbind(names(PMCR))
+publicaciones <- NULL
+for (i in PMCR) {
+  publicaciones <- c(publicaciones, nrow(i))
+}
+MPMCR <- cbind(MPMCR, publicaciones) ## Matriz para Graficar
+
 
 #Grafica
 
