@@ -37,6 +37,14 @@ source("tortaDeAreas.R")
 #Cargar script de barras para articulos por tipo de revista
 source("barrasRevistas.R")
 
+#Cargar script de nube de palabras
+source("dataparaGraficos.R")
+
+
+####################################
+# Variables                        #
+####################################
+
 ####################################
 # Interfaz de usuario              #
 ####################################
@@ -61,19 +69,19 @@ ui <- fluidPage(
       br(),
       
       fluidRow(
-        summaryBox3("Total de Productos", "3.503", width = 12, icon = "fas fa-chart-pie", style = "primary")     
+        summaryBox3("Total de Productos", totalProductos, width = 12, icon = "fas fa-chart-pie", style = "primary")     
                 
       ),
       br(),
       fluidRow(
-        summaryBox3("Generación de Nuevo Conocimiento (GNC)", "2.131", width = 6, style = "primary"),        
-        summaryBox3("Desarrollo Tecnológico e Innovación (DTI)", "134", width = 6, style = "primary"),        
+        summaryBox3("Generación de Nuevo Conocimiento (GNC)", nGNC, width = 6, style = "primary"),        
+        summaryBox3("Desarrollo Tecnológico e Innovación (DTI)", nDTI, width = 6, style = "primary"),        
       ),
       br(),br(),
       fluidRow(
                
-        summaryBox3("Apropiación Social de Conocimiento (ASC)", "179", width = 6, style = "primary"),        
-        summaryBox3("Formación Recurso Humano (FRH)", "1.059", width = 6, style = "primary"),        
+        summaryBox3("Apropiación Social de Conocimiento (ASC)", nASC, width = 6, style = "primary"),        
+        summaryBox3("Formación Recurso Humano (FRH)", nFRH, width = 6, style = "primary"),        
       ),
       hr(),
       #Fila

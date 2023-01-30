@@ -125,3 +125,39 @@ MPMCR <- cbind(MPMCR, publicaciones) ## Matriz para Graficar
 #Grafica
 
 #-------------------------------------------------------------------------------
+##########################
+# Variables para usar    #
+##########################
+
+#Cantidad Total de Articulos
+Articulos <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
+                   sheet = 'Datos de Articulos Shiny')
+NArticulos <- dim(Articulos)[1]
+#Cantidad Total de Eventos Cientificos
+Eventos <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
+                        sheet = 'Eventos científicos')
+NEventos <- dim(Eventos)[1]
+#Cantidad de Trabajos Dirigidos
+Trabajos <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
+                        sheet = 'Trabajo dirigidos ')
+NTrabajos <- dim(Trabajos)[1]
+#Cantidad Total de Libros
+Libros <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
+                   sheet = 'Libros')
+NLibros <- dim(Libros)[1]
+#Cantidad Total de Software
+Software <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
+                   sheet = 'Software')
+NSoftware <- dim(Software)[1]
+
+#Cantidad de Capitulos de Libros
+CapLibros <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
+                       sheet = 'Capitulos de Libro')
+NCapLibros <- dim(CapLibros)[1]
+
+totalProductos <- sum(NArticulos, NEventos, NTrabajos, NLibros, NSoftware, NCapLibros)
+nGNC <- sum(NArticulos, NLibros)
+nDTI <- sum(NSoftware)
+nASC <- sum(NCapLibros)
+nFRH <- sum(NTrabajos)
+#-------------------------------------------------------------------------------
