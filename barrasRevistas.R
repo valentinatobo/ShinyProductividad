@@ -92,11 +92,13 @@ generarBarraArticulosDash <- function(){
   #labelsTablaDeFrec[7] = "TIC"
   
   #rotate_x(tabladeFrec, row.names(tabladeFrec), 45)
-
+  
+  #Objeto de parametro para Graficos "par",  definiendo margenes  "mar"
   par(mar=c(2,4,6,2))
   plt <- barplot (tabladeFrec,
            main = "GNC - Publicaciones en revistas cientificas",
            ylab = "Cantidad de articulos",
+           #Numero de Colores para la Paleta del Grafico
            col = brewer.pal(6, "Set1"),
            #xaxt="n"
   )

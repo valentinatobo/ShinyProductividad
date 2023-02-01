@@ -3,21 +3,43 @@
 ########################
 
 # Librerias
+# instalar los paquetes necesarios
+install.packages("sf")
+install.packages("cartogram")
+install.packages("readxl")
+install.package("dplyr")
+install.packages("ggplot2")
+install.packages("tidyr")
+install.packages("tmap")
 
-#Paquetes para el Analisis
+# activar las librerías instaladas y demas
+library(cartogram)
+library(sf)
 library(readxl)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(tidyr)
+library(tmap)
 library(r2d3)
 library(Hmisc)
+
 # Importación de la Data de Articulos Shiny
 Data <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
                   sheet = 'Datos de Articulos Shiny')
+# importar las geometrías
+mundo <- st_read("countries.geo.json")
+
+#Data para los Cartogramas en ISO 3166-1 alpha-3
+df <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv")
+
 #-------------------------------------------------------------------------------
 
 #Paises donde mas Se Publica
-pais <- "País"
+pais <- "Pais"
 PaiPlus  <- (Data[, pais])
 #Separación de Elementos
-PaiPlusA <- split(PaiPlus, PaiPlus$País)
+PaiPlusA <- split(PaiPlus, PaiPlus$Pais)
 #Muestra De Cantidades
 PaiPlusB <- table(PaiPlus)
 
@@ -161,3 +183,23 @@ nDTI <- sum(NSoftware)
 nASC <- sum(NCapLibros)
 nFRH <- sum(NTrabajos)
 #-------------------------------------------------------------------------------
+
+
+### Pruebas de Graficos
+
+ruta_fuente <- "datosFuenteExcel.xlsx"
+
+#Importar grupos y titulos de artículos
+datos_Articulos <- read_excel(ruta_fuente,
+                              sheet = 'Articulos',
+                              range = 'A1:C1991')
+
+#Solo tomar la columna de la categoria
+articulos <- select(datos_Articulos, 3)
+
+tabladeFrec <- table(articulos)
+labelsTablaDeFrec = names(tabladeFrec)
+
+DataArti  <- select(Data, 4)
+tabladeFrec <- table(DataArti)
+labelsTablaDeFrec = names(tabladeFrec)
