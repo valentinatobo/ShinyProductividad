@@ -41,9 +41,6 @@ source("barrasRevistas.R")
 source("dataparaGraficos.R")
 
 
-####################################
-# Variables                        #
-####################################
 
 ####################################
 # Interfaz de usuario              #
@@ -54,7 +51,7 @@ ui <- fluidPage(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css")),
   
   #Version de D3 que Shiny reconoce
-  tags$script(src='//d3js.org/d3.v3.min.js'),
+  #tags$script(src='//d3js.org/d3.v3.min.js'),
   
   #Tema a utilizar
   theme = shinytheme("flatly"),
@@ -298,34 +295,27 @@ ui <- fluidPage(
     tabPanel(
       #Titulo de la pestaña
       "Análisis de Relaciones",
-      sidebarPanel(
-      selectInput(inputId = "condicionGrafico",
-                  label = 'Graficos',
-                  choices = c("","mtcars", "faithful", "iris")),
-      
-      # Show a plot of the generated distribution
+      # sidebarPanel(
+      #   # selectInput(inputId = "condicionGrafico",
+      #   #             label = 'Graficos',
+      #   #             choices = c("")),
+      #   
+      #   # Show a plot of the generated distribution
+      # ),
       mainPanel(
-        tableOutput("table"),
-        plotOutput("plot")
-      )
-      )
+          column(
+            12,
+            #Espacio para la nube de palabras
+            h3("Articulos Publicados en Paises"),
+            plotlyOutput("Paises"),
+          )
+        )
       
-      ) #Cierre pestaña de graficas
-    ), #Cierre de la barra de navegacion
+      
+    ) #Cierre pestaña de graficas
+  ), #Cierre de la barra de navegacion
 ) #Cierre de la UI
-####################################
-# Funcion de Validacion            #
-####################################
 
-valinput <- function(input) {
-  if (input == "mtcars") {
-    "Choose another data set. No mtcars please!"
-  } else if (input == "") {
-    FALSE
-  } else {
-    NULL
-  }
-}
 ####################################
 # Servidor                         #
 ####################################
@@ -416,18 +406,9 @@ server <- function(input, output, session) {
   })
   
   #Tercera Pestaña
-  data <- reactive({
-    validate(
-      valinput(input$condicionGrafico)
-      )
-    get(input$condicionGrafico, 'package:datasets') })
-  
-  output$plot <- renderPlot({
-    hist(data()[, 1])
-  })
-  output$table <- renderTable({
-    head(data())
-  })
+  output$Paises <- renderPlotly(
+    generarGraficaPaises()
+  )
 }
 
 
