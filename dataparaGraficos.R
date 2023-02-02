@@ -34,16 +34,30 @@ mundo <- st_read("countries.geo.json")
 df <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv")
 
 #-------------------------------------------------------------------------------
+#df$GDP..BILLIONS. <- NULL
 
 #Paises donde mas Se Publica
 pais <- "Pais"
-PaiPlus  <- (Data[, pais])
+Paises  <- (Data[, pais])
 #Separación de Elementos
-PaiPlusA <- split(PaiPlus, PaiPlus$Pais)
+PaiPubA <- split(Paises, Paises$Pais)
 #Muestra De Cantidades
-PaiPlusB <- table(PaiPlus)
-
+#PaiPlusB <- table(PaiPlus)
+PaiPubB <- cbind(names(PaiPubA))
+dataPaiPub <- NULL
+for (i in PaiPubA) {
+  dataPaiPub <- c(dataPaiPub, nrow(i))
+}
+PaiPubB <- cbind(PaiPubB, dataPaiPub)## Matriz para Graficar
+PaiPubB <- as.data.frame(PaiPubB)
+colnames(PaiPubB) <- c('Pais','Articulos')
+articulosPais <- left_join(df, PaiPubB, by=c('COUNTRY'="Pais"))
 #Grafica
+plot(mundo$geometry) # Grafico En Blanco
+#Grafico con Data
+fig <- plot_ly(articulosPais, type='choropleth', locations=articulosPais$CODE, z=articulosPais$Articulos, text=articulosPais$COUNTRY, colorscale="Purples")
+
+fig
 
 #-------------------------------------------------------------------------------
 #Revistas donde mas se Publica
