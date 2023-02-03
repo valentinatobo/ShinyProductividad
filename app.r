@@ -293,27 +293,115 @@ ui <- fluidPage(
       ),
     #Pestaña de graficas de forma general
     tabPanel(
+      
       #Titulo de la pestaña
-      "Análisis de Relaciones",
-      # sidebarPanel(
-      #   # selectInput(inputId = "condicionGrafico",
-      #   #             label = 'Graficos',
-      #   #             choices = c("")),
-      #   
-      #   # Show a plot of the generated distribution
-      # ),
+      "Análisis General",
+      
+      #Panel lateral izquierdo
+      sidebarPanel(
+        
+        #Selector de grupo
+        selectInput("Datas", label = "Datas:", 
+                    choices = c(""), 
+                    selected = ""),
+        
+      ),
+      
+      #Panel principal de graficacion
       mainPanel(
+        
+        #Espacio para red de coocurrencia
+        h4("Países donde más se publican"),
+        plotlyOutput("Paises"),
+        hr(),
+        
+        #Fila para graficas de torta y nube de palabras
+        fluidRow(
+          
+          #Columna para la nube de palabras
           column(
-            12,
+            6,
             #Espacio para la nube de palabras
-            h3("Articulos Publicados en Paises"),
-            plotlyOutput("Paises"),
+            h4("Revistas donde más se publica"),
+            plotlyOutput("Revistas"),
+          ),
+          
+          #Columna para la torta de productividad
+          column(
+            6,
+            #Espacio para la torta de productividad
+            h4("Revistas con mejores cuartiles"),
+            #plotOutput("G3"),
+          ),
+        ),
+        hr(),
+        
+        #Fila para graficas de barras de revistas
+        fluidRow(
+          
+          #Espacio para grafica de revistas nacionales
+          column(
+            #Tamaño
+            6,
+            h4("Áreas de investigación donde más se publica"),
+            #plotOutput("G4")
+            
+          ),
+          
+          #Espacio para grafica de revistas internacionales
+          column(
+            #Tamaño
+            6,
+            h4("Áreas de investigación donde más se publica en revistas de mayor cuartil"),
+            #plotOutput("G5")
           )
-        )
-      
-      
-    ) #Cierre pestaña de graficas
-  ), #Cierre de la barra de navegacion
+        ),
+        
+        #Fila para las primeras 2 tortas (Articulos, Libros)
+        fluidRow(
+          
+          #Espacio para grafica de Articulos
+          column(
+            #Tamaño
+            6,
+            h4("Países con mayor índice de cuartil de revistas"),
+            #plotOutput("G6")
+            
+          ),
+          
+          #Espacio para grafica de revistas internacionales
+          column(
+            #Tamaño
+            6,
+            h4("Países donde se publica con mayores proporciones de áreas de investigación"),
+            #plotOutput("G7")
+          ), 
+          
+          
+        ), hr()
+      ) #Cierre del panel principal
+    )
+  #     #Titulo de la pestaña
+  #     "Análisis de Relaciones",
+  #     # sidebarPanel(
+  #     #   # selectInput(inputId = "condicionGrafico",
+  #     #   #             label = 'Graficos',
+  #     #   #             choices = c("")),
+  #     #   
+  #     #   # Show a plot of the generated distribution
+  #     # ),
+  #     mainPanel(
+  #         column(
+  #           12,
+  #           #Espacio para la nube de palabras
+  #           h3("Articulos Publicados en Paises"),
+  #           plotlyOutput("Paises"),
+  #         )
+  #       )
+  #     
+  #     
+  #   ) #Cierre pestaña de graficas
+   ), #Cierre de la barra de navegacion
 ) #Cierre de la UI
 
 ####################################
@@ -406,8 +494,16 @@ server <- function(input, output, session) {
   })
   
   #Tercera Pestaña
-  output$Paises <- renderPlotly(
+  output$Paises <- renderPlotly({
+    #Cartograma
     generarGraficaPaises()
+  }
+  )
+  
+  output$Revistas <- renderPlotly({
+    #Funcion de revistas
+    generarGraficaRevistas()
+  }
   )
 }
 

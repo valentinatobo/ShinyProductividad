@@ -11,7 +11,9 @@
 # install.packages("ggplot2")
 # install.packages("tidyr")
 # install.packages("tmap")
-
+########################
+#     Librerias        #
+########################
 # activar las librerías instaladas y demas
 library(cartogram)
 library(sf)
@@ -23,10 +25,14 @@ library(tidyr)
 library(tmap)
 library(r2d3)
 library(Hmisc)
+library(packcircles)
+library(viridisLite)
+library(viridis)
+library(ggiraph)
 ########################
 #     Data Global      #
 ########################
-#-------------------------------------------------------------------------------
+
 # Importación de la Data de Articulos Shiny
 Data <- read_excel("Consolidado_Productividad_gráficas_2000_2022.xlsx",
                   sheet = 'Datos de Articulos Shiny')
@@ -76,7 +82,6 @@ cuartil <- "SJR/JCR"
 Area1 <- "Area de Investigación 1"
 Area2 <- "Area de Investigación 2"
 #-------------------------------------------------------------------------------
-
 #Paises donde mas Se Publica
 generarGraficaPaises <- function(){
   Paises  <- (Data[, pais])
@@ -103,11 +108,9 @@ generarGraficaPaises <- function(){
     projection = list(type = 'Mercator')
   )
   fig <- plot_geo(articulosPais, type='choropleth', locations=articulosPais$CODE, z=articulosPais$Articulos, text=articulosPais$COUNTRY, colorscale="Purples")
-  
-  fig <- fig %>% colorbar(fig, title = "Numero de Articulos")
   fig <- fig %>% colorbar(title = 'Densidad de Articulos')
   fig <- fig %>% layout(
-    title = 'Articulos Publicados<br> Por País',
+    title = 'Densidad de Articulos',
     geo = g
   )
   fig
@@ -116,11 +119,56 @@ generarGraficaPaises <- function(){
 #Revistas donde mas se Publica
 generarGraficaRevistas <- function(){
   RevPlus  <- (Data[,c(issn, revista)])
-  #Separación de Elementos
+  #Limpiando Las cadenas
+  # for (i in 1:length(RevPlus[[1]])) {
+  #   a <- NULL
+  #   a <- RevPlus[[1]][i]
+  #   a <- gsub(" ", "", a)
+  #   RevPlus[[1]][i] <- a
+  # }
   RevPlusA <- split(RevPlus, RevPlus$ISSN)
-  #Muestra De Cantidades
-  RevPlusB <- table(RevPlus)
+  RevPlusB <- cbind(names(RevPlusA))
+  RevPubli <- NULL
+  for (i in RevPlusA) {
+    RevPubli <- c(RevPubli, nrow(i))
+  }
+  nrev <- NULL
+  for (i in RevPlusA) {
+    a <- table(i[2])
+    valor_mas_frecuente <- names(a)[which.max(a)]
+    nrev <- c(nrev, valor_mas_frecuente)
+  }
+  RevPlusB <-  as.data.frame(cbind(RevPlusB, RevPubli, nrev))## Matriz de articulos por pais
   #Grafica
+  
+
+  # # Add a column with the text you want to display for each bubble:
+  # data$text <- paste("name: ",data$V1, "\n", "value:", data$RevPubli, "\n", "You can add a story here!")
+  # 
+  # # Generate the layout
+  # packing <- circleProgressiveLayout(RevPlusB$RevPubli, sizetype='area')
+  # data <- cbind(data, packing)
+  # dat.gg <- circleLayoutVertices(packing, npoints=298662)
+  # 
+  # # Make the plot with a few differences compared to the static version:
+  # p <- ggplot() + 
+  #   geom_polygon_interactive(data = dat.gg, aes(x, y, group = id, fill=id, tooltip = data$V1, data_id = id), colour = "black", alpha = 0.6) +
+  #   scale_fill_viridis() +
+  #   geom_text(data = data, aes(x, y, label = gsub("Group_", "", group)), size=2, color="black") +
+  #   theme_void() + 
+  #   theme(legend.position="none", plot.margin=unit(c(0,0,0,0),"cm") ) + 
+  #   coord_equal()
+  # 
+  # # Turn it interactive
+  # widg <- ggiraph(ggobj = p, width_svg = 7, height_svg = 7)
+  
+  revs <- plot_ly(
+    x = RevPlusB$nrev,
+    y = as.numeric(RevPlusB$RevPubli),
+    name = "Publicaciones por Revisa",
+    type = "bar"
+  )
+  revs
 }
 #-------------------------------------------------------------------------------
 #Revistas con mejores Cuartiles
@@ -136,80 +184,76 @@ generarGraficamejoresCuartiles <- function(){
   #Revistas con Cuartil 1 y 2
   RevMay <- na.exclude(RevCuar[RevCuar$`SJR/JCR` == "Q1" | RevCuar$`SJR/JCR` == "Q2",])
   #Grafica
+  
 }
-
-
 #-------------------------------------------------------------------------------
-
 #Áreas de investigación donde más se publica
-
-ArPlus1 <- Data[, Area1]
-ArPlus2 <- Data[, Area2]
-#Agrupación de Las Areas
-ArPlus1 <- split(ArPlus1, ArPlus1$`Area de Investigación 1`)
-ArPlus2 <- split(ArPlus2, ArPlus2$`Area de Investigación 2`)
-
-#Grafica
-
+generarGraficaAreasdeInves <- function(){
+  ArPlus1 <- Data[, Area1]
+  ArPlus2 <- Data[, Area2]
+  #Agrupación de Las Areas
+  ArPlus1 <- split(ArPlus1, ArPlus1$`Area de Investigación 1`)
+  ArPlus2 <- split(ArPlus2, ArPlus2$`Area de Investigación 2`)
+  
+  #Grafica
+}
 #-------------------------------------------------------------------------------
 #Áreas de investigación donde más se publica en revistas de mayor cuartil
-
-#Tabla Con los Datos Necesarios
-ArCuar1 <- Data[, c(Area1, issn, cuartil)]
-ArCuar2 <- Data[, c(Area2, issn, cuartil)]
-
-#Cambiamos la Columna de Cuartil por un tipo clasificador
-ArCuar1$`SJR/JCR` <- factor(ArCuar1$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
-ArCuar2$`SJR/JCR` <- factor(ArCuar2$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
-
-#Revistas con Cuartil 1 y 2
-ArCuarMay1 <- na.exclude(ArCuar1[ArCuar1$`SJR/JCR` == "Q1" | ArCuar1$`SJR/JCR` == "Q2",])
-ArCuarMay2 <- na.exclude(ArCuar2[ArCuar2$`SJR/JCR` == "Q1" | ArCuar2$`SJR/JCR` == "Q2",])
-#Agrupación de Las Areas
-ArCuarMay1 <- split(ArCuarMay1, ArCuarMay1$`Area de Investigación 1`)
-ArCuarMay2 <- split(ArCuarMay2, ArCuarMay2$`Area de Investigación 2`)
-
-#Contrucción de la matriz en que se encontraran los Datos para Graficar
-matriz <- cbind(names(ArCuarMay1))
-publicaciones <- NULL
-for (i in ArCuarMay1) {
-  publicaciones <- c(publicaciones, nrow(i))
+generarGraficasAreasCuartil <- function(){
+  #Tabla Con los Datos Necesarios
+  ArCuar1 <- Data[, c(Area1, issn, cuartil)]
+  ArCuar2 <- Data[, c(Area2, issn, cuartil)]
+  
+  #Cambiamos la Columna de Cuartil por un tipo clasificador
+  ArCuar1$`SJR/JCR` <- factor(ArCuar1$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
+  ArCuar2$`SJR/JCR` <- factor(ArCuar2$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
+  
+  #Revistas con Cuartil 1 y 2
+  ArCuarMay1 <- na.exclude(ArCuar1[ArCuar1$`SJR/JCR` == "Q1" | ArCuar1$`SJR/JCR` == "Q2",])
+  ArCuarMay2 <- na.exclude(ArCuar2[ArCuar2$`SJR/JCR` == "Q1" | ArCuar2$`SJR/JCR` == "Q2",])
+  #Agrupación de Las Areas
+  ArCuarMay1 <- split(ArCuarMay1, ArCuarMay1$`Area de Investigación 1`)
+  ArCuarMay2 <- split(ArCuarMay2, ArCuarMay2$`Area de Investigación 2`)
+  
+  #Contrucción de la matriz en que se encontraran los Datos para Graficar
+  matriz <- cbind(names(ArCuarMay1))
+  publicaciones <- NULL
+  for (i in ArCuarMay1) {
+    publicaciones <- c(publicaciones, nrow(i))
+  }
+  matriz <- cbind(matriz, publicaciones)## Matriz para Graficar
+  
+  #Grafica
+  
 }
-matriz <- cbind(matriz, publicaciones)## Matriz para Graficar
-
-#Grafica
-
 #-------------------------------------------------------------------------------
 #Países con mayor índice de cuartil de revistas
-PMCR <- Data[, c(pais, cuartil)]
-#Separar mejores Cuartiles
-#Cambiamos la Columna de Cuartil por un tipo clasificador
-PMCR$`SJR/JCR` <- factor(PMCR$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
-#Revistas con Cuartil 1 y 2
-PMCR <- na.exclude(PMCR[PMCR$`SJR/JCR` == "Q1" | PMCR$`SJR/JCR` == "Q2",])
-#Separar por Paises
-PMCR <- split(PMCR, PMCR$Pais)
-#Construir Tabla para Grafico
-MPMCR <- cbind(names(PMCR))
-publicaciones <- NULL
-for (i in PMCR) {
-  publicaciones <- c(publicaciones, nrow(i))
+generarGraficaPaisesCuartil <- function(){
+  PMCR <- Data[, c(pais, cuartil)]
+  #Separar mejores Cuartiles
+  #Cambiamos la Columna de Cuartil por un tipo clasificador
+  PMCR$`SJR/JCR` <- factor(PMCR$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
+  #Revistas con Cuartil 1 y 2
+  PMCR <- na.exclude(PMCR[PMCR$`SJR/JCR` == "Q1" | PMCR$`SJR/JCR` == "Q2",])
+  #Separar por Paises
+  PMCR <- split(PMCR, PMCR$Pais)
+  #Construir Tabla para Grafico
+  MPMCR <- cbind(names(PMCR))
+  publicaciones <- NULL
+  for (i in PMCR) {
+    publicaciones <- c(publicaciones, nrow(i))
+  }
+  MPMCR <- cbind(MPMCR, publicaciones) ## Matriz para Graficar
+  
+  
+  #Grafica
 }
-MPMCR <- cbind(MPMCR, publicaciones) ## Matriz para Graficar
-
-
-#Grafica
-
 #-------------------------------------------------------------------------------
 #Países donde se publica con mayores proporciones de áreas de investigación
-
-#Grafica
-
-#-------------------------------------------------------------------------------
-#Relación de últimos años 5 por área de investigación
-
-#Grafica
-
+generarGraficaPaisesArea <- function(){
+  
+  #Grafica
+}
 #-------------------------------------------------------------------------------
 
 
