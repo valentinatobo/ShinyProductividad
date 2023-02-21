@@ -331,7 +331,7 @@ ui <- fluidPage(
             6,
             #Espacio para la torta de productividad
             h4("Revistas con mejores cuartiles"),
-            #plotOutput("G3"),
+            plotlyOutput("RevistasCuartil"),
           ),
         ),
         hr(),
@@ -344,8 +344,7 @@ ui <- fluidPage(
             #Tamaño
             6,
             h4("Áreas de investigación donde más se publica"),
-            #plotOutput("G4")
-            
+            plotlyOutput("areasPlus"),
           ),
           
           #Espacio para grafica de revistas internacionales
@@ -353,7 +352,7 @@ ui <- fluidPage(
             #Tamaño
             6,
             h4("Áreas de investigación donde más se publica en revistas de mayor cuartil"),
-            #plotOutput("G5")
+            plotlyOutput("areaCuartilPlus")
           )
         ),
         
@@ -365,7 +364,7 @@ ui <- fluidPage(
             #Tamaño
             6,
             h4("Países con mayor índice de cuartil de revistas"),
-            #plotOutput("G6")
+            plotlyOutput("paisCuartil")
             
           ),
           
@@ -374,7 +373,7 @@ ui <- fluidPage(
             #Tamaño
             6,
             h4("Países donde se publica con mayores proporciones de áreas de investigación"),
-            #plotOutput("G7")
+            plotlyOutput("areaPais")
           ), 
           
           
@@ -505,6 +504,34 @@ server <- function(input, output, session) {
     generarGraficaRevistas()
   }
   )
+  output$RevistasCuartil <- renderPlotly({
+    #Funcion de revistas
+    generarGraficamejoresCuartiles()
+  }
+  )
+  output$areasPlus <- renderPlotly({
+    #Funcion de revistas
+    generarGraficaAreasdeInves()
+  }
+  )
+  output$areaCuartilPlus <- renderPlotly({
+    #Funcion de revistas
+    generarGraficasAreasCuartil()
+  }
+  )
+  output$paisCuartil <- renderPlotly({
+    #Funcion de revistas
+    generarGraficaPaisesCuartil()
+  }
+  )
+  output$areaPais <- renderPlotly({
+    #Funcion de revistas
+    generarGraficaPaisesArea()
+  }
+  )
+  
+  
+  
 }
 
 

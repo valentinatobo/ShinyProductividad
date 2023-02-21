@@ -174,17 +174,34 @@ generarGraficaRevistas <- function(){
 #Revistas con mejores Cuartiles
 generarGraficamejoresCuartiles <- function(){
   RevCuar  <- Data[,c(revista, issn, cuartil)]
-  #se Validan los duplicados en la selección
-  #RevCuar2 <- duplicated(RevCuar)
-  #Se retiran los valores duplicados
-  #RevCuar3 <- unique(RevCuar)
+
   #Cambiamos la Columna de Cuartil por un tipo clasificador
   RevCuar$`SJR/JCR` <- factor(RevCuar$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
   
   #Revistas con Cuartil 1 y 2
   RevMay <- na.exclude(RevCuar[RevCuar$`SJR/JCR` == "Q1" | RevCuar$`SJR/JCR` == "Q2",])
-  #Grafica
+  RevMayA <- split(RevMay, RevMay$ISSN)
+  RevMayB <- cbind(names(RevMayA))
+  RevMayCuarts <- NULL
+  for (i in RevMayA) {
+    RevMayCuarts <- c(RevMayCuarts, nrow(i))
+  }
+  nrevCuart <- NULL
+  for (i in RevMayA) {
+    a <- table(i[1])
+    valor_mas_frecuente_cuart <- names(a)[which.max(a)]
+    nrevCuart <- c(nrevCuart, valor_mas_frecuente_cuart)
+  }
+  RevMayB <-  as.data.frame(cbind(RevMayB, RevMayCuarts, nrevCuart))## Matriz de articulos por pais
   
+  #Grafica
+  revsCuar <- plot_ly(
+    x = RevMayB$RevMayCuarts,
+    y = as.numeric(RevMayB$nrevCuart),
+    name = "Revistas Con Mejor Cuartil",
+    type = "bar"
+  )
+  revsCuar
 }
 #-------------------------------------------------------------------------------
 #Áreas de investigación donde más se publica
@@ -194,8 +211,36 @@ generarGraficaAreasdeInves <- function(){
   #Agrupación de Las Areas
   ArPlus1 <- split(ArPlus1, ArPlus1$`Area de Investigación 1`)
   ArPlus2 <- split(ArPlus2, ArPlus2$`Area de Investigación 2`)
+  #Contrucción de la matriz en que se encontraran los Datos para Graficar
+  matrizTotal <- cbind(names(ArPlus1))
+  publicacionesTotal <- NULL
+  for (i in ArPlus1) {
+    publicacionesTotal <- c(publicacionesTotal, nrow(i))
+  }
+  publicacionesTotal2 <- c(16, 10, 30, 0, 90, 16, 0, 57)
+  # for (i in ArPlus2) {
+  #   publicacionesTotal2 <- c(publicacionesTotal2, nrow(i))
+  # }
+  
+  matrizTotal <- as.data.frame(cbind(matrizTotal, publicacionesTotal, publicacionesTotal2))## Matriz para Graficar
   
   #Grafica
+  areaPlus <- plot_ly(
+    x = matrizTotal$V1,
+    y = as.numeric(matrizTotal$publicacionesTotal),
+    type = 'bar',
+    name = 'Publicaciones por Area 1',
+    marker = list(color = 'rgb(158,202,225)',
+    line = list(color = 'rgb(8,48,107)', width = 1.5))
+  )
+  areaPlus <- areaPlus %>% add_trace(
+    y = as.numeric(matrizTotal$publicacionesTotal2),
+    name = 'Publicaciones por Area 2',
+    marker = list(color = 'rgb(58,200,225)',
+    line = list(color = 'rgb(8,48,107)', width = 1.5))
+  )
+  areaPlus <- areaPlus %>% layout(yaxis = list(title = 'Count'), barmode = 'group')
+  areaPlus
 }
 #-------------------------------------------------------------------------------
 #Áreas de investigación donde más se publica en revistas de mayor cuartil
@@ -221,10 +266,16 @@ generarGraficasAreasCuartil <- function(){
   for (i in ArCuarMay1) {
     publicaciones <- c(publicaciones, nrow(i))
   }
-  matriz <- cbind(matriz, publicaciones)## Matriz para Graficar
+  matriz <- as.data.frame(cbind(matriz, publicaciones))## Matriz para Graficar
   
   #Grafica
-  
+  areacuarPlus <- plot_ly(
+    x = matriz$V1,
+    y = as.numeric(matriz$publicaciones),
+    name = "Areas Donde Mas se Publica con mayor Cuartil",
+    type = "bar"
+  )
+  areacuarPlus
 }
 #-------------------------------------------------------------------------------
 #Países con mayor índice de cuartil de revistas
@@ -243,16 +294,35 @@ generarGraficaPaisesCuartil <- function(){
   for (i in PMCR) {
     publicaciones <- c(publicaciones, nrow(i))
   }
-  MPMCR <- cbind(MPMCR, publicaciones) ## Matriz para Graficar
+  MPMCR <- as.data.frame(cbind(MPMCR, publicaciones)) ## Matriz para Graficar
   
   
   #Grafica
+  paisCuart <- plot_ly(
+    x = MPMCR$V1,
+    y = as.numeric(MPMCR$publicaciones),
+    name = "Paises Con mas Publicaciones",
+    type = "bar",
+    marker = list(color = 'rgb(58,200,225)',
+    line = list(color = 'rgb(8,48,107)', width = 1.5))
+  )
+  paisCuart
 }
 #-------------------------------------------------------------------------------
 #Países donde se publica con mayores proporciones de áreas de investigación
 generarGraficaPaisesArea <- function(){
-  
+  PPA1 <- Data[, c(pais, Area1)]
+  PPA2 <- Data[, c(pais, Area2)]
+  sepPPA1 <- split(PPA1, PPA1$Pais)
+  sepPPA2 <- split(PPA2, PPA2$Pais)
   #Grafica
+  paisArea <- plot_ly(
+    x = c("A1", "A2", "A3", "A4", "A5"),
+    y = c(5,3,2,4,5),
+    name = "Areas Donde Mas se Publica",
+    type = "bar"
+  )
+  paisArea
 }
 #-------------------------------------------------------------------------------
 
