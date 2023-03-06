@@ -356,18 +356,19 @@ ui <- fluidPage(
             h4("Países con mayor índice de cuartil de revistas"),
             plotlyOutput("paisCuartil")
             
-          ),
-          
-          #Espacio para grafica de revistas internacionales
-          column(
-            #Tamaño
-            6,
-            h4("Países donde se publica con mayores proporciones de áreas de investigación"),
-            plotlyOutput("areaPais")
-          ), 
+          )
           
           
-        ), hr()
+        ),
+      fluidRow(
+        #Espacio para grafica de revistas internacionales
+        column(
+          #Tamaño
+          12,
+          h4("Países donde se publica con mayores proporciones de áreas de investigación"),
+          plotlyOutput("areaPais")
+        ),
+      ), hr()
       #), #Cierre del panel principal (Este Panel se usa cuando tendremos Lateral, de resto es ideal no usarlo)
     ),
    ), #Cierre de la barra de navegacion

@@ -335,6 +335,7 @@ generarGraficaPaisesArea <- function(){
     names(col) <- i
     dataPPA1 <- cbind(dataPPA1, col)
   }
+  #se hace el conteo por cada area para cada Pais
   for(i in sepPPA1){
     areas <- NULL
     #Primero separar por Areas
@@ -348,35 +349,42 @@ generarGraficaPaisesArea <- function(){
       if (nrow(j)>0) {
         dataPPA1[fila, j[[2]][1]] <- as.numeric(nrow(j))
       }
-      # print(fila)
-      # print("_-------------")
-      # print(j[[2]][1])
     }
   }
   
-  #se hace el conteo por cada area para cada Pais
-  
-  
+
   #Esta linea Quita todos los totales en los que los totales de publicaciones sea menor de 10
-  dataPPA1 <- subset(dataPPA1, Total>=10) #Ok
+  dataPPA1 <- subset(dataPPA1, Total>=10) #Esta Matriz es con la que se debe Graficar
+  #Grafica
   
-  #Espacio Para El Grafico
-  #plot(mundo$geometry) # Grafico En Blanco
-  #Grafico Simple
-  l <- list(color = toRGB("grey"), width = 0.5)
+  grafPaisArea <- plot_ly(
+    x = dataPPA1$Pais,
+    y = as.numeric(dataPPA1$`Energía y Potencia`),
+    type = 'bar',
+    name = colnames(dataPPA1)[3],
+    marker = list(color = 'rgb(158,202,225)',
+                  line = list(color = 'rgb(8,48,107)', width = 1.5))
+  )
+  grafPaisArea <- grafPaisArea %>% add_trace(
+    y = as.numeric(dataPPA1$`Geomática, Ciencias de la Tierra y Gestión de Territorio`),
+    name = colnames(dataPPA1)[4],
+    marker = list(color = 'rgb(58,200,225)',
+                  line = list(color = 'rgb(8,48,107)', width = 1.5))
+  )
+  cols <- ncol(dataPPA1)
+  for (co in 5:cols) {
+    nombre = colnames(dataPPA1)[co]
+    colorg <- paste('rgb(',sample(1:225,1) ,',',sample(1:225,1),',',sample(1:225,1),')')
+    grafPaisArea <- grafPaisArea %>% add_trace(
+          y = as.numeric(dataPPA1[,co]),
+          name = nombre,
+          marker = list(color = colorg,
+                        line = list(color = 'rgb(8,48,107)', width = 1.5))
+        )
+  }
+  grafPaisArea <- grafPaisArea %>% layout(yaxis = list(title = 'Count'), barmode = 'group')
+  grafPaisArea
   
-  g <- list(
-    showframe = TRUE,
-    showcoastlines = TRUE,
-    projection = list(type = 'Mercator')
-  )
-  fig <- plot_geo(articulosPais, type='choropleth', locations=articulosPais$CODE, z=articulosPais$Articulos, text=articulosPais$COUNTRY, colorscale="Purples")
-  fig <- fig %>% colorbar(title = 'Densidad de Articulos')
-  fig <- fig %>% layout(
-    title = 'Densidad de Articulos',
-    geo = g
-  )
-  fig
 }
 #-------------------------------------------------------------------------------
 
