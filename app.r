@@ -297,23 +297,14 @@ ui <- fluidPage(
       #Titulo de la pestaña
       "Análisis General",
       
-      #Panel lateral izquierdo
-      sidebarPanel(
-        
-        #Selector de grupo
-        selectInput("Datas", label = "Datas:", 
-                    choices = c(""), 
-                    selected = ""),
-        
-      ),
-      
       #Panel principal de graficacion
-      mainPanel(
-        
-        #Espacio para red de coocurrencia
-        h4("Países donde más se publican"),
-        plotlyOutput("Paises"),
-        hr(),
+      #mainPanel(
+        fluidRow(
+          #Espacio para Grafico Cartograma
+          h4("Países donde más se publican"),
+          plotlyOutput("Paises"),
+          hr(),
+        ),
         
         #Fila para graficas de torta y nube de palabras
         fluidRow(
@@ -329,7 +320,6 @@ ui <- fluidPage(
           #Columna para la torta de productividad
           column(
             6,
-            #Espacio para la torta de productividad
             h4("Revistas con mejores cuartiles"),
             plotlyOutput("RevistasCuartil"),
           ),
@@ -378,28 +368,8 @@ ui <- fluidPage(
           
           
         ), hr()
-      ) #Cierre del panel principal
-    )
-  #     #Titulo de la pestaña
-  #     "Análisis de Relaciones",
-  #     # sidebarPanel(
-  #     #   # selectInput(inputId = "condicionGrafico",
-  #     #   #             label = 'Graficos',
-  #     #   #             choices = c("")),
-  #     #   
-  #     #   # Show a plot of the generated distribution
-  #     # ),
-  #     mainPanel(
-  #         column(
-  #           12,
-  #           #Espacio para la nube de palabras
-  #           h3("Articulos Publicados en Paises"),
-  #           plotlyOutput("Paises"),
-  #         )
-  #       )
-  #     
-  #     
-  #   ) #Cierre pestaña de graficas
+      #), #Cierre del panel principal (Este Panel se usa cuando tendremos Lateral, de resto es ideal no usarlo)
+    ),
    ), #Cierre de la barra de navegacion
 ) #Cierre de la UI
 

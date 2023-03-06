@@ -196,8 +196,8 @@ generarGraficamejoresCuartiles <- function(){
   
   #Grafica
   revsCuar <- plot_ly(
-    x = RevMayB$RevMayCuarts,
-    y = as.numeric(RevMayB$nrevCuart),
+    x = RevMayB$nrevCuart,
+    y = as.numeric(RevMayB$RevMayCuarts),
     name = "Revistas Con Mejor Cuartil",
     type = "bar"
   )
@@ -314,15 +314,69 @@ generarGraficaPaisesArea <- function(){
   PPA1 <- Data[, c(pais, Area1)]
   PPA2 <- Data[, c(pais, Area2)]
   sepPPA1 <- split(PPA1, PPA1$Pais)
+  areas1 <- names(split(PPA1, PPA1$`Area de Investigación 1`))
   sepPPA2 <- split(PPA2, PPA2$Pais)
-  #Grafica
-  paisArea <- plot_ly(
-    x = c("A1", "A2", "A3", "A4", "A5"),
-    y = c(5,3,2,4,5),
-    name = "Areas Donde Mas se Publica",
-    type = "bar"
+  areas2 <- names(split(PPA2, PPA2$`Area de Investigación 2`))
+  sepPPA1A <- cbind(names(sepPPA1))
+  sepPPA2A <- cbind(names(sepPPA2))
+  dataPPA1 <- NULL
+  #Calculando los totales
+  for (i in sepPPA1) {
+    dataPPA1 <-as.numeric((c(dataPPA1, nrow(i))))
+  }
+  dataPPA1 <- as.data.frame(cbind(sepPPA1A, dataPPA1))
+  dataPPA1$dataPPA1 <- as.numeric(dataPPA1$dataPPA1)
+  colnames(dataPPA1)[1] <- "Pais"
+  colnames(dataPPA1)[2] <- "Total"
+  #Agregamos las Columnas para cada una de las Areas
+  for(i in areas1){
+    col <- NULL
+    col <- data.frame(matrix(nrow = nrow(dataPPA1), ncol = 1))
+    names(col) <- i
+    dataPPA1 <- cbind(dataPPA1, col)
+  }
+  for(i in sepPPA1){
+    areas <- NULL
+    #Primero separar por Areas
+    areas <- as.data.frame(i)
+    areas <- split(areas, areas$`Area de Investigación 1`)
+    #Tercero Contar las Filas
+    for (j in areas) {
+      fila <- NULL
+      fila <- i[[1]][[1]][[1]]
+      fila <- which(dataPPA1$Pais == fila)
+      if (nrow(j)>0) {
+        dataPPA1[fila, j[[2]][1]] <- as.numeric(nrow(j))
+      }
+      # print(fila)
+      # print("_-------------")
+      # print(j[[2]][1])
+    }
+  }
+  
+  #se hace el conteo por cada area para cada Pais
+  
+  
+  #Esta linea Quita todos los totales en los que los totales de publicaciones sea menor de 10
+  dataPPA1 <- subset(dataPPA1, Total>=10) #Ok
+  
+  #Espacio Para El Grafico
+  #plot(mundo$geometry) # Grafico En Blanco
+  #Grafico Simple
+  l <- list(color = toRGB("grey"), width = 0.5)
+  
+  g <- list(
+    showframe = TRUE,
+    showcoastlines = TRUE,
+    projection = list(type = 'Mercator')
   )
-  paisArea
+  fig <- plot_geo(articulosPais, type='choropleth', locations=articulosPais$CODE, z=articulosPais$Articulos, text=articulosPais$COUNTRY, colorscale="Purples")
+  fig <- fig %>% colorbar(title = 'Densidad de Articulos')
+  fig <- fig %>% layout(
+    title = 'Densidad de Articulos',
+    geo = g
+  )
+  fig
 }
 #-------------------------------------------------------------------------------
 
