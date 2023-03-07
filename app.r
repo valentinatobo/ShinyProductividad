@@ -352,13 +352,11 @@ ui <- fluidPage(
           #Espacio para grafica de Articulos
           column(
             #Tamaño
-            6,
+            12,
             h4("Países con mayor índice de cuartil de revistas"),
             plotlyOutput("paisCuartil")
             
           )
-          
-          
         ),
       fluidRow(
         #Espacio para grafica de revistas internacionales
@@ -371,6 +369,58 @@ ui <- fluidPage(
       ), hr()
       #), #Cierre del panel principal (Este Panel se usa cuando tendremos Lateral, de resto es ideal no usarlo)
     ),
+    tabPanel(
+      #Titulo de la Pestaña
+      "Analisis de Grupos",
+      #Grupos donde mas se publica por Pais
+      fluidRow(
+        column(
+          12,
+          h4("Grupos donde mas se Publica por Pais"),
+          plotlyOutput("gruposPais"),
+        ),
+      ),
+      #Grupos donde mas Se publica Por Revista
+      fluidRow(
+        column(
+          12,
+          h4("Grupos donde mas se Publica por Revista"),
+          plotlyOutput("gruposRevista"),
+        ),
+      ),
+      #Grupos publican mejores cuartiles
+      fluidRow(
+        column(
+          12,
+          h4("Grupos que publican en Mejores Cuartiles"),
+          plotlyOutput("gruposCuartil"),
+        ),
+      ),
+      #Grupos publican por área de investigación
+      fluidRow(
+        column(
+          12,
+          h4("publicaciones de grupos Por area de Investigación"),
+          plotlyOutput("gruposArea"),
+        ),
+      ),
+      #Grupos con áreas investigación por cuartil
+      fluidRow(
+        column(
+          12,
+          h4("Grupos con Areas de Investigación por Cuartil"),
+          plotlyOutput("gruposArCuar"),
+        ),
+      ),
+      #Grupos en países con mayor índice cuartil
+      fluidRow(
+        column(
+          12,
+          h4("Grupos en paises con mayor indice de Cuartil"),
+          plotlyOutput("gruposPaisCuar"),
+        ),
+      ),
+    ),#Cierre Cuarta Pestaña
    ), #Cierre de la barra de navegacion
 ) #Cierre de la UI
 
@@ -379,130 +429,129 @@ ui <- fluidPage(
 ####################################
 
 server <- function(input, output, session) {
-  
+  #-----------------------------------------------------------------------------
   #1ra pestaña
+  #Principal
   output$GNCBarras <- renderPlot({
     #Llamar al script correspondiente
     generarBarraArticulosDash()
   })
-  
   output$GNCLibros <- renderPlot({
     #Llamar al script correspondiente
     generarBarraLibrosDash()
   })
-  
   output$DTISoftware <- renderPlot({
     #Llamar al script correspondiente
     generarBarraSoftwareDash()
   })
-  
   output$ASCLibros <- renderPlot({
     #Llamar al script correspondiente
     generarBarraCapitulosDash()
   })
-  
   output$FRHTrabajos <- renderPlot({
     #Llamar al script correspondiente
     generarBarraTrabajosDash()
   })
   
+  #----------------------------------------------------------------------------
   #FRHTrabajos
   #2da pestaña
   output$redDeCoocurrencia <- renderPlot({
     #Llamar al script correspondiente
     generarRedDeCoocurrenciasPorGrupo(input$grupo)
   })
-  
   output$nubeDePalabras <- renderPlot({
     #Llamar al script correspondiente
     generarNubeDePalabrasPorGrupo(input$grupo)
   })
-  
   output$tortaDeAreasArticulos <- renderPlot({
     #Llamar al script correspondiente
     generarTortaPorAreaArticulos(input$grupo)
   })
-  
   output$tortaDeAreasArticulos <- renderPlot({
     #Llamar al script correspondiente
     generarTortaPorAreaArticulos(input$grupo)
   })
-  
   output$barrasRevNac <- renderPlot({
     #Llamar al script correspondiente
     generarBarraArticulosRevista(input$grupo, 10)
   })
-  
   output$barrasRevInt <- renderPlot({
     #Llamar al script correspondiente
     generarBarraArticulosRevista(input$grupo, 11)
   })
-  
   output$tortaGrupoArt <- renderPlot({
     #Llamar al script correspondiente
     generarTortaPorGrupoArticulos(input$grupo)
   })
-  
   output$tortaGrupoLib <- renderPlot({
     #Llamar al script correspondiente
     generarTortaPorGrupoLibros(input$grupo)
   })
-  
   output$tortaGrupoSof <- renderPlot({
     #Llamar al script correspondiente
     generarTortaPorGrupoSoftware(input$grupo)
   })
-  
   output$tortaGrupoCap <- renderPlot({
     #Llamar al script correspondiente
     generarTortaPorGrupoCapitulos(input$grupo)
   })
-  
   output$tortaGrupoTra <- renderPlot({
     #Llamar al script correspondiente
     generarTortaPorGrupoTrabajos(input$grupo)
   })
   
+  #-----------------------------------------------------------------------------
   #Tercera Pestaña
   output$Paises <- renderPlotly({
     #Cartograma
     generarGraficaPaises()
-  }
-  )
-  
+  })
   output$Revistas <- renderPlotly({
     #Funcion de revistas
     generarGraficaRevistas()
-  }
-  )
+  })
   output$RevistasCuartil <- renderPlotly({
     #Funcion de revistas
     generarGraficamejoresCuartiles()
-  }
-  )
+  })
   output$areasPlus <- renderPlotly({
     #Funcion de revistas
     generarGraficaAreasdeInves()
-  }
-  )
+  })
   output$areaCuartilPlus <- renderPlotly({
     #Funcion de revistas
     generarGraficasAreasCuartil()
-  }
-  )
+  })
   output$paisCuartil <- renderPlotly({
     #Funcion de revistas
     generarGraficaPaisesCuartil()
-  }
-  )
+  })
   output$areaPais <- renderPlotly({
     #Funcion de revistas
     generarGraficaPaisesArea()
-  }
-  )
+  })
   
-  
-  
+  #-----------------------------------------------------------------------------
+  #Cuarta Pestaña GRUPOS
+  output$gruposPais <- renderPlotly({
+    generarGraficagruposPais()
+  })
+  output$gruposRevista<- ({
+    
+  })
+  output$gruposCuartil<- ({
+    
+  })
+  output$gruposArea<- ({
+    
+  })
+  output$gruposArCuar<- ({
+    
+  })
+  output$gruposPaisCuar<- ({
+    
+  })
 }
 
 

@@ -81,6 +81,7 @@ revista <- "Nombre de revista"
 cuartil <- "SJR/JCR"
 Area1 <- "Area de Investigación 1"
 Area2 <- "Area de Investigación 2"
+grupo <- "Grupo"
 #-------------------------------------------------------------------------------
 #Paises donde mas Se Publica
 generarGraficaPaises <- function(){
@@ -387,6 +388,69 @@ generarGraficaPaisesArea <- function(){
   
 }
 #-------------------------------------------------------------------------------
+#Grupos donde mas publican por Pais
+generarGraficagruposPais <- function(){
+  grupPais <- Data[, c(grupo, pais)]
+  vecGrup <- as.data.frame(names(split(grupPais, grupPais$Grupo)))
+  names(vecGrup) <- "Grupo"
+  vecPais <-  names(split(grupPais, grupPais$Pais))
+  grupPais <- split(grupPais, grupPais$Grupo)
+  #Agregamos las Columnas de los Paises, y una extra del Total
+  Total <- NULL
+  Total <- data.frame(matrix(nrow = nrow(vecGrup), ncol = 1))
+  names(Total) <- "Total"
+  vecGrup <- cbind(vecGrup, Total)
+  for (i in vecPais) {
+    col <- NULL
+    col <- data.frame(matrix(nrow = nrow(vecGrup), ncol = 1))
+    names(col) <- i
+    vecGrup <- cbind(vecGrup, col)
+  }
+  for (j in grupPais) {
+    total <- NULL
+    total <- nrow(j)
+    filagrup <- NULL
+    filagrup <- j[[1]][1]
+    filagrup <- which(vecGrup$Grupo == filagrup)
+    colum <- "Total"
+    PaisesTotal <- as.data.frame(j[2])
+    PaisesTotal <- split(PaisesTotal, PaisesTotal$Pais)
+    if (nrow(j)>0) {
+      vecGrup[filagrup, colum] <- as.numeric(total)
+    }
+    for (k in PaisesTotal) {
+      totPais <- NULL
+      colum <- NULL
+      totPais <- nrow(k)
+      colum <- k[[1]][1]
+      print(k[[1]][1])
+      if (nrow(j)>0) {
+        vecGrup[filagrup, colum] <- as.numeric(totPais)
+      }
+    }
+  }
+  
+  #Ahora se Filtraran los Grupos en los que halla menos de X publicaiones
+  x <- 100
+  vecGrup <- subset(vecGrup, Total>=x) #Esta Matriz es con la que se debe Graficar
+  
+  #Grafico
+  fig <- plot_ly(vecGrup, x = vecGrup$Grupo,
+                 y = vecGrup$Total,
+                 name = "Total",
+                 type = 'scatter',
+                 mode = 'lines',
+                 line = list(shape = "spline"))
+  nc <- ncol(vecGrup)
+  for (c in 3:nc) {
+    nom <- colnames(vecGrup)[c]
+    fig <- fig %>% add_trace(y = vecGrup[, c],
+                             name = nom,
+                             connectgaps = TRUE,
+                             line = list(shape = "spline"))
+  }
+  
+  
+  fig
+}
 
-
-### Pruebas de Graficos
