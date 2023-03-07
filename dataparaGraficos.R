@@ -423,7 +423,6 @@ generarGraficagruposPais <- function(){
       colum <- NULL
       totPais <- nrow(k)
       colum <- k[[1]][1]
-      print(k[[1]][1])
       if (nrow(j)>0) {
         vecGrup[filagrup, colum] <- as.numeric(totPais)
       }
@@ -452,5 +451,54 @@ generarGraficagruposPais <- function(){
   
   
   fig
+}
+#-------------------------------------------------------------------------------
+#Grupos donde mas publican Por Revistas
+generarGraficaGrupoRevista <- function(){
+  grupRevistas <- Data[, c(grupo, revista)]
+  vecRevs <- as.data.frame(names(split(grupRevistas, grupRevistas$`Nombre de revista`)))
+  names(vecRevs) <- "Revistas"
+  vecGrup <-  names(split(grupRevistas, grupRevistas$Grupo))
+  grupRevs <- split(grupRevistas, grupRevistas$`Nombre de revista`)
+  
+  #Agregamos las Columnas de los Paises, y una extra del Total
+  Total <- NULL
+  Total <- data.frame(matrix(nrow = nrow(vecRevs), ncol = 1))
+  names(Total) <- "Total"
+  vecRevs <- cbind(vecRevs, Total)
+  for (i in vecGrup) {
+    col <- NULL
+    col <- data.frame(matrix(nrow = nrow(vecRevs), ncol = 1))
+    names(col) <- i
+    vecRevs <- cbind(vecRevs, col)
+  }
+  for (j in grupRevs) {
+    total <- NULL
+    total <- nrow(j)
+    filaRev <- NULL
+    filaRev <- j[[2]]
+    filaRev <- which(vecRevs$Revistas == filaRev)
+    colum <- "Total"
+    grupTotal <- as.data.frame(j[1])
+    grupTotal <- split(grupTotal, grupTotal$Grupo)
+    if (nrow(j)>0) {
+      vecRevs[filaRev, colum] <- as.numeric(total)
+    }
+    for (k in grupTotal) {
+      totRevs <- NULL
+      colum <- NULL
+      totRevs <- nrow(k)
+      colum <- k[[1]][1]
+      if (nrow(j)>0) {
+        vecRevs[filaRev, colum] <- as.numeric(totRevs)
+      }
+    }
+  }
+  #Ahora se Filtraran los Grupos en los que halla menos de X publicaiones
+  x <- 10
+  vecRevs <- subset(vecRevs, Total>=x) #Esta Matriz es con la que se debe Graficar
+  
+  
+  
 }
 

@@ -297,7 +297,6 @@ ui <- fluidPage(
       #Titulo de la pestaña
       "Análisis General",
       
-      #Panel principal de graficacion
       #mainPanel(
         fluidRow(
           #Espacio para Grafico Cartograma
@@ -306,13 +305,10 @@ ui <- fluidPage(
           hr(),
         ),
         
-        #Fila para graficas de torta y nube de palabras
         fluidRow(
-          
-          #Columna para la nube de palabras
           column(
             6,
-            #Espacio para la nube de palabras
+            #Grafico de Revistas (Dividir en nacional E internacional)
             h4("Revistas donde más se publica"),
             plotlyOutput("Revistas"),
           ),
@@ -320,16 +316,13 @@ ui <- fluidPage(
           #Columna para la torta de productividad
           column(
             6,
-            h4("Revistas con mejores cuartiles"),
+            h4("Revistas con mejores cuartiles (Q1 & Q2)"),
             plotlyOutput("RevistasCuartil"),
           ),
         ),
         hr(),
-        
-        #Fila para graficas de barras de revistas
+      
         fluidRow(
-          
-          #Espacio para grafica de revistas nacionales
           column(
             #Tamaño
             6,
@@ -337,33 +330,30 @@ ui <- fluidPage(
             plotlyOutput("areasPlus"),
           ),
           
-          #Espacio para grafica de revistas internacionales
           column(
             #Tamaño
             6,
-            h4("Áreas de investigación donde más se publica en revistas de mayor cuartil"),
+            h4("Áreas de investigación donde más se publica en revisatas Q1 & Q2"),
             plotlyOutput("areaCuartilPlus")
           )
         ),
         
-        #Fila para las primeras 2 tortas (Articulos, Libros)
         fluidRow(
           
-          #Espacio para grafica de Articulos
+          #Espacio para grafica 
           column(
             #Tamaño
             12,
-            h4("Países con mayor índice de cuartil de revistas"),
+            h4("Países con mayor índice de cuartil de revistas (Q1 & Q2)"),
             plotlyOutput("paisCuartil")
             
           )
         ),
       fluidRow(
-        #Espacio para grafica de revistas internacionales
         column(
           #Tamaño
           12,
-          h4("Países donde se publica con mayores proporciones de áreas de investigación"),
+          h4("Países donde más se publica según Área de Investigación"),
           plotlyOutput("areaPais")
         ),
       ), hr()
@@ -537,8 +527,8 @@ server <- function(input, output, session) {
   output$gruposPais <- renderPlotly({
     generarGraficagruposPais()
   })
-  output$gruposRevista<- ({
-    
+  output$gruposRevista<- renderPlotly({
+    generarGraficaGrupoRevista()  
   })
   output$gruposCuartil<- ({
     
