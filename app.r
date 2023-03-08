@@ -530,8 +530,8 @@ server <- function(input, output, session) {
   output$gruposRevista<- renderPlotly({
     generarGraficaGrupoRevista()  
   })
-  output$gruposCuartil<- ({
-    
+  output$gruposCuartil<- renderPlotly({
+    generarGraficaGrupoCuartil()
   })
   output$gruposArea<- ({
     

@@ -498,7 +498,41 @@ generarGraficaGrupoRevista <- function(){
   x <- 10
   vecRevs <- subset(vecRevs, Total>=x) #Esta Matriz es con la que se debe Graficar
   
+  #Grafico
+  figgr <- plot_ly(vecRevs, x = abbreviate(vecRevs$Revistas, 15),
+                 y = vecRevs$ARCOSES,
+                 name = 'ARCOSES') %>% add_bars() %>% hide_legend()
+  n <- ncol(vecRevs)-3
   
+  for (r in 4:n) {
+    names <-  colnames(vecRevs)[r]
+    figgr <- figgr %>% add_trace(y = vecRevs[, r], name = names)
+  }
   
+  figgr <- figgr %>% layout(barmode = 'stack')
+  figgr 
 }
 
+#-------------------------------------------------------------------------------
+#Grupos que Publican en Q1 y Q2
+generarGraficaGrupoCuartil <- function(){
+  grupQuar <- Data[, c(grupo, cuartil)]
+  #Cambiamos la Columna de Cuartil por un tipo clasificador
+  grupQuar$`SJR/JCR` <- factor(grupQuar$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
+  #Revistas con Cuartil 1 y 2
+  grupQuar <- na.exclude(grupQuar[grupQuar$`SJR/JCR` == "Q1" | grupQuar$`SJR/JCR` == "Q2",])
+  #Separar por Paises
+  grupQuar <- split(grupQuar, grupQuar$Grupo)
+  #Construir Tabla para Grafico
+  MayGrups <- cbind(names(grupQuar))
+  publicaciones <- NULL
+  for (i in grupQuar) {
+    publicaciones <- c(publicaciones, nrow(i))
+  }
+  MayGrups <- as.data.frame(cbind(MayGrups, publicaciones)) ## Matriz para Graficar
+  figgq <- plot_ly(MayGrups, x = MayGrups$V1,
+                 y = MayGrups$publicaciones,
+                 color = MayGrups$V1) %>% add_bars() %>% hide_legend()
+  figgq
+  
+}
