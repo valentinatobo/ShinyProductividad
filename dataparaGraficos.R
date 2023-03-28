@@ -82,6 +82,7 @@ cuartil <- "SJR/JCR"
 Area1 <- "Area de Investigación 1"
 Area2 <- "Area de Investigación 2"
 grupo <- "Grupo"
+
 #-------------------------------------------------------------------------------
 #Paises donde mas Se Publica
 generarGraficaPaises <- function(){
@@ -536,3 +537,14 @@ generarGraficaGrupoCuartil <- function(){
   figgq
   
 }
+
+
+#-------------------------------------------------------------------------------
+#Publicaciones de Grupos Por Area de Investigación
+
+#-------------------------------------------------------------------------------
+#Grupos con Areas de Investigación por Cuartil
+
+#-------------------------------------------------------------------------------
+#Grupos en paises con mayor indice de Cuartil
+

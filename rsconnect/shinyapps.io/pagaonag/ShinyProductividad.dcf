@@ -5,9 +5,9 @@ account: pagaonag
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 7407558
-bundleId: 6465508
+bundleId: 6932464
 url: https://pagaonag.shinyapps.io/ShinyProductividad/
-when: 1667357921.3276
-lastSyncTime: 1667357921.32761
+when: 1678301723.73
+lastSyncTime: 1678301723.73004
 asMultiple: FALSE
 asStatic: FALSE
