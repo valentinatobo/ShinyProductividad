@@ -541,7 +541,25 @@ generarGraficaGrupoCuartil <- function(){
 
 #-------------------------------------------------------------------------------
 #Publicaciones de Grupos Por Area de Investigación
-
+generarGraficaGrupoArea <- function(){
+  grupQuar <- Data[, c(grupo, cuartil)]
+  #Cambiamos la Columna de Cuartil por un tipo clasificador
+  grupQuar$`SJR/JCR` <- factor(grupQuar$`SJR/JCR`, levels = c("Q1", "Q2", "Q3", "Q4", "NI"))
+  #Revistas con Cuartil 1 y 2
+  grupQuar <- na.exclude(grupQuar[grupQuar$`SJR/JCR` == "Q1" | grupQuar$`SJR/JCR` == "Q2",])
+  #Separar por Paises
+  grupQuar <- split(grupQuar, grupQuar$Grupo)
+  #Construir Tabla para Grafico
+  MayGrups <- cbind(names(grupQuar))
+  publicaciones <- NULL
+  for (i in grupQuar) {
+    publicaciones <- c(publicaciones, nrow(i))
+  }
+  MayGrups <- as.data.frame(cbind(MayGrups, publicaciones)) ## Matriz para Graficar
+  figgq <- plot_ly(MayGrups, x = MayGrups$V1,
+                   y = MayGrups$publicaciones,
+                   color = MayGrups$V1) %>% add_bars() %>% hide_legend()
+}
 #-------------------------------------------------------------------------------
 #Grupos con Areas de Investigación por Cuartil
 
